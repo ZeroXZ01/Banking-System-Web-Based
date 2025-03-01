@@ -1,5 +1,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.banking.model.AccountDTO" %>
+<%@ page import="java.math.BigDecimal" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -343,13 +344,15 @@
         if (accounts != null && !accounts.isEmpty()) {
             // Calculate summary statistics
             int totalAccounts = accounts.size();
-            double totalBalance = 0;
+            BigDecimal totalBalance = BigDecimal.ZERO;
             int checkingCount = 0;
             int savingsCount = 0;
 
             for (AccountDTO account : accounts) {
                 try {
-                    totalBalance += account.getBalance().doubleValue();
+//                    totalBalance += account.getBalance().doubleValue();
+                    totalBalance =totalBalance.add(account.getBalance());
+
                     if ("CHECKING".equalsIgnoreCase(account.getAccount_type())) {
                         checkingCount++;
                     } else if ("SAVINGS".equalsIgnoreCase(account.getAccount_type())) {
@@ -369,8 +372,8 @@
         </div>
         <div class="summary-card">
             <div class="summary-card-title">Total Balance</div>
-            <div class="summary-card-value <%= totalBalance < 0 ? "negative" : "positive" %>">
-                <%= totalBalance < 0 ? "-$" + Math.abs(totalBalance) : "$" + totalBalance %>
+            <div class="summary-card-value <%= totalBalance.compareTo(BigDecimal.ZERO) < 0 ? "negative" : "positive" %>">
+                <%= totalBalance.compareTo(BigDecimal.ZERO) < 0 ? "-$" + totalBalance.abs(): "$" + totalBalance %>
             </div>
             <div class="summary-card-footer">Combined balance</div>
         </div>

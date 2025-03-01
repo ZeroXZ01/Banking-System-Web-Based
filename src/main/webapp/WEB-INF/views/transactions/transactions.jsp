@@ -13,6 +13,7 @@
       --primary: #00529B;
       --primary-light: #2980b9;
       --secondary: #0072CE;
+      --secondary-button-amount: #2ecc71;
       --accent: #F2A900;
       --light-gray: #f8f9fa;
       --medium-gray: #e9ecef;
@@ -164,7 +165,7 @@
     }
 
     .credit {
-      color: var(--secondary);
+      color: var(--secondary-button-amount);
     }
 
     .empty-state {
@@ -198,7 +199,7 @@
     }
 
     .button.secondary {
-      background-color: var(--secondary);
+      background-color: var(--secondary-button-amount);
     }
 
     .button.secondary:hover {
