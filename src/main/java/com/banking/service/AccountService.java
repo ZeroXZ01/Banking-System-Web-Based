@@ -10,6 +10,7 @@ import com.banking.util.TransactionLogger;
 
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -187,8 +188,16 @@ public class AccountService extends DatabaseConnection {
             depositStatement.executeUpdate();
 
             // Log transactions
-            transactionLogger.logTransaction(fromAccountId, amount.negate());
-            transactionLogger.logTransaction(toAccountId, amount);
+            Instant now = Instant.now();
+            Timestamp timestamp1 = Timestamp.from(now);
+            Timestamp timestamp2 = Timestamp.from(now.plusSeconds(1)); // Add 1 second
+
+            transactionLogger.logTransaction(fromAccountId, amount.negate(), timestamp1);
+            transactionLogger.logTransaction(toAccountId, amount, timestamp2);
+
+            // Log transactions
+//            transactionLogger.logTransaction(fromAccountId, amount.negate());
+//            transactionLogger.logTransaction(toAccountId, amount);
             transactionLogger.logTransfer(fromAccountId, toAccountId, amount);
         } catch (SQLException e) {
             throw new BankingException("Failed to process transfer: " + e.getMessage());
