@@ -1,5 +1,6 @@
 package com.banking.webservlet;
 
+import com.banking.BankingSystem;
 import com.banking.service.AccountService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,6 +20,7 @@ public class ReportServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        BankingSystem bank=new BankingSystem();
         try {
             // Fetch reports from service
             Map<String, Object> accountSummary = reportService.getAccountSummary();
@@ -35,6 +37,11 @@ public class ReportServlet extends HttpServlet {
         } catch (Exception e) {
             throw new ServletException("Error retrieving reports", e);
         }
+
+        // Save report to txt file
+        bank.getAccountSummaryReport();
+        bank.getDailyTransactionReport();
+        bank.getAccountActivityReport();
     }
 }
 

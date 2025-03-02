@@ -16,7 +16,7 @@ import java.util.Map;
 public class BankingSystem {
     private final AccountService accountService;
 
-    private BankingSystem() {
+    public BankingSystem() { // Made private to public for ReportServlet able to access it
         this.accountService = new AccountService();
     }
 

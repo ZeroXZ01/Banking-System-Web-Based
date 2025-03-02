@@ -425,31 +425,34 @@ public class AccountService extends DatabaseConnection {
 
     // Added method to process monthly fess for all accounts
     public void processMonthlyFees() {
-        String sql = "SELECT account_id, account_type, balance FROM accounts";
+        String sql = "SELECT account_id, account_type, balance, created_at FROM accounts ORDER BY created_at ASC";
         try  {
 
             connect();
             statement = connect.createStatement();
             resultSet=statement.executeQuery(sql);
 
+            Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
+
             while (resultSet.next()) {
                 String accountId = resultSet.getString("account_id");
                 String account_type = resultSet.getString("account_type");
                 BigDecimal balance = resultSet.getBigDecimal("balance");
+                currentTimestamp = Timestamp.valueOf(currentTimestamp.toLocalDateTime().plusSeconds(1));
 
                 if ("SAVINGS".equals(account_type)) {
                     SavingsAccount savingsAccount = new SavingsAccount(accountId, balance);
                     savingsAccount.processMonthlyFees();
                     updateAccountBalance(savingsAccount.getAccountNumber(), savingsAccount.getBalance());
-                    BigDecimal originalBalance = savingsAccount.getBalance().subtract(balance);
-                    addTransactionForMonthlyFeesAndInterest(savingsAccount.getAccountNumber(), originalBalance);
+                    BigDecimal deducted = savingsAccount.getBalance().subtract(balance);
+                    transactionLogger.logTransaction(savingsAccount.getAccountNumber(), deducted, currentTimestamp);
 
                 } else if ("CHECKING".equals(account_type)) {
                     CheckingAccount checkingAccount = new CheckingAccount(accountId, balance);
                     checkingAccount.processMonthlyFees();
                     updateAccountBalance(checkingAccount.getAccountNumber(), checkingAccount.getBalance());
-                    BigDecimal originalBalance = checkingAccount.getBalance().subtract(balance);
-                    addTransactionForMonthlyFeesAndInterest(checkingAccount.getAccountNumber(), originalBalance);
+                    BigDecimal deducted = checkingAccount.getBalance().subtract(balance);
+                    transactionLogger.logTransaction(checkingAccount.getAccountNumber(), deducted, currentTimestamp);
                 }
             }
             System.out.println("Monthly fees and interest applied successfully.");
@@ -466,21 +469,6 @@ public class AccountService extends DatabaseConnection {
             preparedStatement = connect.prepareStatement(sql);
             preparedStatement.setBigDecimal(1, newBalance);
             preparedStatement.setString(2, accountNumber);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void addTransactionForMonthlyFeesAndInterest(String accountId, BigDecimal amount) {
-        String insertSql = "INSERT INTO transactions (account_id, amount, date) VALUES (?, ?, ?)";
-
-        try  {
-            connect();
-            preparedStatement = connect.prepareStatement(insertSql);
-            preparedStatement.setString(1, accountId);
-            preparedStatement.setBigDecimal(2, amount);
-            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -12,15 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TransactionLogger extends DatabaseConnection {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"); // added DateTimeFormatter for log to file
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a"); // added DateTimeFormatter for log to file
 
     // Log Transaction for Create Account, Deposit and Withdraw
     public void logTransaction(String accountId, BigDecimal amount) {
         try {
             connect();
-            preparedStatement = connect.prepareStatement("INSERT INTO transactions (account_id, amount) VALUES (?, ?)");
+            preparedStatement = connect.prepareStatement("INSERT INTO transactions (account_id, amount, transaction_date) VALUES (?, ?, ?)");
             preparedStatement.setString(1, accountId);
             preparedStatement.setBigDecimal(2, amount);
+            preparedStatement.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
             preparedStatement.executeUpdate();
 
             // Also log to file*
@@ -44,7 +45,7 @@ public class TransactionLogger extends DatabaseConnection {
         }
     }
 
-    // Log Transaction for Transfer
+    // Log Transaction for Transfer and Process MonthlyFees
     public void logTransaction(String accountId, BigDecimal amount, Timestamp timestamp) {
         try {
             connect();
