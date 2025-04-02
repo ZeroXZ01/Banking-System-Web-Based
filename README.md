@@ -139,8 +139,7 @@ spring.datasource.hikari.maximum-pool-size=10
 ---
 
 ## 📌 Future Plans  
-✔️ Migrate to **Spring Boot** for better scalability  
-✔️ Implement **JWT-based authentication**  
+✔️ Migrate to **Spring Boot** for better scalability   
 ✔️ Build a **React-based frontend**  
 
 ---
