@@ -49,7 +49,7 @@ Ensure you have:
 ### 📥 Clone the Repository  
 ```sh
 git clone https://github.com/ZeroXZ01/Banking-System-Web-Based
-cd banking-system
+cd Banking-System-Web-Based
 ```
 
 ### 📌 Configure MySQL Database  
