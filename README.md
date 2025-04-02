@@ -116,11 +116,9 @@ spring.datasource.hikari.maximum-pool-size=10
 ---
 
 ## 📌 Application Screenshots  
-1. **Register** a new user  
-2. **Login** with valid credentials  
-3. **View account details** (balance, transactions)  
-4. **Transfer funds** to another account  
-5. **Logout securely**  
+---
+![Homepage](images/Homepage.png)
+
 
 ---
 
