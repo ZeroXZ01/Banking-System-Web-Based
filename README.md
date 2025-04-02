@@ -1,12 +1,11 @@
 # 🏦**Banking System Web App using JSP and Servlet**  
 
 #### 📖 Overview  
-This is a **web-based banking system** built using **JSP, Servlets, and MySQL**. It allows users to create accounts, manage their funds, and perform transactions. The project follows **MVC architecture** and uses **HikariCP for database connection pooling** to enhance performance.  
+This is a **web-based banking system** built using **JSP, Servlets, and MySQL**. It allows users to create accounts, manage their funds, and perform transactions. The project follows a **Layered Architecture with MVC Principles** and uses **HikariCP for database connection pooling** to enhance performance.  
 
 ---
 
 ## 🚀 Features  
-✅ **User Authentication** – Secure login and registration  
 ✅ **Account Management** – View balance, transaction history, and user details  
 ✅ **Fund Transfers** – Send money between accounts securely  
 ✅ **Transaction History** – Track deposits and withdrawals  
