@@ -1,30 +1,64 @@
 package com.banking.db;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 
 public abstract class DatabaseConnection {
-    private final static String URL = "jdbc:mysql://localhost:3306/"; // Note: No database specified here
-    private final static String USERNAME = "root";
-    private final static String PASSWORD = "";
-    private final static String DRIVER = "com.mysql.cj.jdbc.Driver";
-    private final static String DATABASE_NAME = "db_web_based_banking"; // Database name
+    private static final String URL = "jdbc:mysql://localhost:3306/";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
+    private static final String DATABASE_NAME = "db_web_based_banking";
     public static Connection connect;
     public Statement statement;
     public ResultSet resultSet;
     public PreparedStatement preparedStatement;
 
-    public static void connect() {
+    private static HikariDataSource dataSource;
+
+    static {
         try {
             Class.forName(DRIVER);
-            connect = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            createDatabaseIfNotExists(connect); // Create database first
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + DATABASE_NAME, USERNAME, PASSWORD); // Connect to specific database
-            initializeDatabase(connect);
-             System.out.println("Successfully connected to database!");
+
+            // Step 1: Create database if not exists
+            Connection tempConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            createDatabaseIfNotExists(tempConn);
+            tempConn.close();
+
+            // Step 2: Initialize HikariCP
+            HikariConfig config = new HikariConfig();
+            config.setJdbcUrl(URL + DATABASE_NAME);
+            config.setUsername(USERNAME);
+            config.setPassword(PASSWORD);
+            config.setDriverClassName(DRIVER);
+            config.setMaximumPoolSize(10);
+            config.setMinimumIdle(2);
+            config.setIdleTimeout(30000);
+            config.setMaxLifetime(1800000);
+
+            dataSource = new HikariDataSource(config);
+
+            // Step 3: Initialize database schema
+            try (Connection conn = dataSource.getConnection()) {
+                initializeDatabase(conn);
+            }
+
+            System.out.println("Successfully connected to database!");
         } catch (Exception e) {
             System.out.println("Connection Failed " + e.getMessage());
+            throw new RuntimeException("Failed to initialize database", e);
+        }
+    }
+
+    public static void connect() {
+        try {
+            connect = dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to get database connection", e);
         }
     }
 
@@ -35,7 +69,7 @@ public abstract class DatabaseConnection {
             }
             String createDbScript = new String(createDbStream.readAllBytes());
             conn.createStatement().execute(createDbScript);
-             System.out.println("Database created or already exists.");
+            System.out.println("Database created or already exists.");
         }
     }
 
@@ -52,13 +86,19 @@ public abstract class DatabaseConnection {
                     }
                 }
             }
-             System.out.println("Database schema initialized successfully");
+            System.out.println("Database schema initialized successfully.");
         } catch (IOException | SQLException e) {
             throw new RuntimeException("Failed to initialize database schema", e);
         }
     }
 
-//    public static void main(String[] args) {
-//        connect();
-//    }
+    public static void closeConnection() {
+        try {
+            if (connect != null && !connect.isClosed()) {
+                connect.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error closing connection: " + e.getMessage());
+        }
+    }
 }
