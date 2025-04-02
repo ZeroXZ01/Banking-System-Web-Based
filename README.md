@@ -8,9 +8,9 @@ This is a **web-based banking system** built using **JSP, Servlets, and MySQL**.
 ## 🚀 Features  
 ✅ **Account Management** – View balance, transaction history, and user details  
 ✅ **Fund Transfers** – Send money between accounts securely  
-✅ **Transaction History** – Track deposits and withdrawals  
-✅ **Database Integration** – MySQL with indexes for optimized queries  
-
+✅ **Transaction Logging** (Deposits, Withdrawals)  
+✅ **Automatic Database Initialization** (Loads `create_database.sql` & `schema.sql`)  
+✅ **Secure Database Connection with HikariCP**  
 ---
 
 ## 🛠️ Tech Stack  
@@ -20,6 +20,25 @@ This is a **web-based banking system** built using **JSP, Servlets, and MySQL**.
 | **JSP & Servlets** | Jakarta EE 6.1.0 |
 | **MySQL**      | 9.2.0 (Connector) |
 | **HikariCP**   | 5.1.0    |
+
+---
+## Project Structure
+```pgsql
+src/
+│── main/
+│   ├── java/
+│   │   ├── db/          # Database connection (JDBC & HikariCP)
+│   │   ├── exception/   # Custom exceptions
+│   │   ├── model/       # Account & Transaction models
+│   │   ├── service/     # Business logic
+│   │   ├── util/        # Helper classes
+│   │   ├── webservlet/  # Servlets (Controller Layer)
+│   ├── resources/
+│   │   ├── create_database.sql  # SQL script to create the database
+│   │   ├── schema.sql           # SQL script to create tables
+│   ├── webapp/                  # JSP & Static Resources
+│── test/                        # Unit Tests
+```
 
 ---
 
@@ -46,62 +65,51 @@ Ensure you have:
 ✔️ **Apache Tomcat 9/10+** installed  
 ✔️ **MySQL Server** running  
 
-### 📥 Clone the Repository  
+### **1. Clone the Repository** 🚀
 ```sh
-git clone https://github.com/ZeroXZ01/Banking-System-Web-Based
+git clone https://github.com/ZeroXZ01/Banking-System-Web-Based.git
 cd Banking-System-Web-Based
 ```
 
-### 📌 Configure MySQL Database  
-1. **Create the database** in MySQL:  
-   ```sql
-   CREATE DATABASE db_web_based_banking;
-   USE db_web_based_banking;
-   ```
-2. **Create required tables**:
-   ```sql
-   -- Create Accounts table
-   CREATE TABLE IF NOT EXISTS accounts (
-       account_id VARCHAR(10) PRIMARY KEY,
-       account_type VARCHAR(20) NOT NULL,
-       balance DECIMAL(10,2) NOT NULL,
-       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-   );
+### **2. Database Setup** 💻
+The database and tables are **automatically created** when the application runs. The `DatabaseConnection.java` file **loads and executes** the following SQL scripts:
 
-   -- Create Transactions table
-   CREATE TABLE IF NOT EXISTS transactions (
-       transaction_id BIGINT AUTO_INCREMENT PRIMARY KEY,
-       account_id VARCHAR(10) NOT NULL,
-       amount DECIMAL(10,2) NOT NULL,
-       description VARCHAR(255),
-       transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-       FOREIGN KEY (account_id) REFERENCES accounts(account_id)
-   );
+- **`create_database.sql`** → Creates the database if it does not exist.
+- **`schema.sql`** → Creates the necessary tables.
 
-   -- Create indexes for better performance
-   CREATE INDEX IF NOT EXISTS idx_account_id ON transactions(account_id);
-   CREATE INDEX IF NOT EXISTS idx_transaction_date ON transactions(transaction_date);
-   ```
-### ⚙️ Database Configuration  
+However, if you prefer manual setup, follow the steps below.
 
-This project **already includes a Java-based JDBC connection** in `DatabaseConnection.java`, which handles:  
-✅ Connecting to MySQL  
-✅ Creating the database if it does not exist  
-✅ Initializing the schema from `schema.sql`  
+#### **Option 1: Using MySQL CLI** 💡
+```sh
+mysql -u root -p < src/main/resources/create_database.sql
+mysql -u root -p db_web_based_banking < src/main/resources/schema.sql
+```
+
+#### **Option 2: Using MySQL Workbench** 🛠️
+1. Open **MySQL Workbench**.
+2. Open and execute `src/main/resources/create_database.sql` to create the database.
+3. Open and execute `src/main/resources/schema.sql` to create the necessary tables.
+
+### **3. Configure Database Connection** 🔧
+The project has a `DatabaseConnection.java` class that handles database connections. It:
+- Uses **HikariCP** for connection pooling.
+- Loads and executes `create_database.sql` and `schema.sql` automatically.
+- Ensures the database schema is initialized at startup.
 
 Alternatively, you can configure the database using an **`application.properties` file** (recommended for future migration to Spring Boot):  
 
 ```
 spring.datasource.url=jdbc:mysql://localhost:3306/db_web_based_banking
 spring.datasource.username=root
-spring.datasource.password=yourpassword
+spring.datasource.password=
 spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 spring.datasource.hikari.maximum-pool-size=10
 ```
 
-
-### 🚀 Build & Deploy  
-1. **Build the WAR file** using Maven:  
+---
+## **Running the Project**
+### **Using Maven and Tomcat**
+1. **Build the project**  
    ```sh
    mvn clean package
    ```
@@ -111,7 +119,6 @@ spring.datasource.hikari.maximum-pool-size=10
      ```
      http://localhost:8080
      ```
-
 ---
 
 ## 📌 Application Screenshots  
@@ -153,4 +160,8 @@ spring.datasource.hikari.maximum-pool-size=10
 This project is **open-source** under the MIT License.  
 
 ---
+
+---
+
+Let me know if there's anything else you need! 😊
 
