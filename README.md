@@ -120,7 +120,7 @@ spring.datasource.hikari.maximum-pool-size=10
 ![Homepage](src/main/webapp/images/Homepage.png)
 
 ### Account List
-![Account List](src/main/webapp/images/Account List.png)
+![Account List](src/main/webapp/images/Account-List.png)
 
 ### Deposit
 ![Deposit](src/main/webapp/images/Deposit.png)
@@ -129,10 +129,10 @@ spring.datasource.hikari.maximum-pool-size=10
 ![Withdraw](src/main/webapp/images/Withdraw.png)
 
 ### Transaction List
-![Transaction List](src/main/webapp/images/Transaction List.png)
+![Transaction List](src/main/webapp/images/Transaction-List.png)
 
 ### Financial Report
-![Financial Report](src/main/webapp/images/Financial Report.png)
+![Financial Report](src/main/webapp/images/Financial-Report.png)
 
 
 
