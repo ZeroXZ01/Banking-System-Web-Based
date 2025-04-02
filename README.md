@@ -156,12 +156,3 @@ spring.datasource.hikari.maximum-pool-size=10
 
 ---
 
-## 📜 License  
-This project is **open-source** under the MIT License.  
-
----
-
----
-
-Let me know if there's anything else you need! 😊
-
