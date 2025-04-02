@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Ignore .txt files for logs and reports ###
+.txt
