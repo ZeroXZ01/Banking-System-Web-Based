@@ -124,7 +124,7 @@ spring.datasource.hikari.maximum-pool-size=10
 ## 📌 Application Screenshots  
 ---
 ### Homepage
-![Homepage](src/main/webapp/images/Homepage.png)
+![Homepage](src/main/webapp/images/Account-Creation.png)
 
 ### Account List
 ![Account List](src/main/webapp/images/Account-List.png)
