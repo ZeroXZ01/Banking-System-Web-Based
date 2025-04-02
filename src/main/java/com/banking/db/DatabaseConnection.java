@@ -35,10 +35,11 @@ public abstract class DatabaseConnection {
             config.setUsername(USERNAME);
             config.setPassword(PASSWORD);
             config.setDriverClassName(DRIVER);
-            config.setMaximumPoolSize(10);
+            config.setMaximumPoolSize(20);
             config.setMinimumIdle(2);
             config.setIdleTimeout(30000);
             config.setMaxLifetime(1800000);
+            config.setLeakDetectionThreshold(2000);  // This will log connections that are not closed within 2 seconds
 
             dataSource = new HikariDataSource(config);
 
